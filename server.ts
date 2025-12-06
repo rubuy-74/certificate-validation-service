@@ -103,7 +103,10 @@ const server = http.createServer(async (req, res) => {
 			if (!productId || !certId) {
 				res.writeHead(400, { "Content-Type": "application/json" });
 				res.end(
-					JSON.stringify({ success: false, message: "Missing productId or certId" }),
+					JSON.stringify({
+						success: false,
+						message: "Missing productId or certId",
+					}),
 				);
 				return;
 			}
