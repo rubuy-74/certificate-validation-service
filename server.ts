@@ -95,19 +95,23 @@ const server = http.createServer(async (req, res) => {
 			return;
 		}
 
-		// Delete certificate: DELETE /certificates/:productId
+		// Delete a single certificate: DELETE /certificates/:productId/:certId
 		if (url.pathname.startsWith("/certificates/") && method === "DELETE") {
 			const segments = url.pathname.split("/");
 			const productId = segments[2];
-			if (!productId) {
+			const certId = segments[3];
+			if (!productId || !certId) {
 				res.writeHead(400, { "Content-Type": "application/json" });
 				res.end(
-					JSON.stringify({ success: false, message: "Missing productId" }),
+					JSON.stringify({
+						success: false,
+						message: "Missing productId or certId",
+					}),
 				);
 				return;
 			}
 
-			const success = await service.deleteCertificate(productId);
+			const success = await service.deleteProductCertificate(productId, certId);
 			res.writeHead(success ? 200 : 400, {
 				"Content-Type": "application/json",
 			});

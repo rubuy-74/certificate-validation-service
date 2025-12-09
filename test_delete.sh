@@ -3,17 +3,18 @@ set -euo pipefail
 
 # Test to delete all certificates for a product via DELETE /certificates/:productId
 CLOUD_RUN_URL="${CLOUD_RUN_URL:-https://certificate-validation-180908610681.europe-southwest1.run.app}"
-PRODUCT_ID="${1:-ISCC-PLUS-Cert-US201-134022025}"
+PRODUCT_ID="${1:-bananao-001}"
+CERT_ID="${2:-ISCC-CORSIA-Cert-US201-2440920252}"
 
-if [ -z "$PRODUCT_ID" ]; then
-  echo "Usage: $0 <productId>" >&2
+if [ -z "$PRODUCT_ID" ] || [ -z "$CERT_ID" ]; then
+  echo "Usage: $0 <productId> <certId>" >&2
   exit 1
 fi
 
 echo "[test-delete] Using Cloud Run URL: $CLOUD_RUN_URL" >&2
-echo "[test-delete] Deleting productId: $PRODUCT_ID" >&2
+echo "[test-delete] Deleting productId: $PRODUCT_ID certId: $CERT_ID" >&2
 
-RESPONSE=$(curl -sS -X DELETE "$CLOUD_RUN_URL/certificates/$PRODUCT_ID" -H "Content-Type: application/json") || {
+RESPONSE=$(curl -sS -X DELETE "$CLOUD_RUN_URL/certificates/$PRODUCT_ID/$CERT_ID" -H "Content-Type: application/json") || {
   echo "[test-delete] curl failed" >&2
   exit 1
 }
