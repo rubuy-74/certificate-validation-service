@@ -22,10 +22,24 @@ export class CommunicationService {
 				};
 			}
 			case "delete": {
-				const deleteStatus =
-					await certificatesService.deleteCertificate(productId);
+				const deleteStatus = await certificatesService.deleteProductCertificate(
+					productId,
+					certificateId,
+				);
 				return {
 					operationType: "deleteResponse",
+					status: deleteStatus,
+				};
+			}
+			case "deleteProductCertificate": {
+				const deleteStatus = await certificatesService.deleteProductCertificate(
+					productId,
+					certificateId,
+				);
+				return {
+					operationType: "deleteProductCertificateResponse",
+					productId: productId,
+					certificateId: certificateId,
 					status: deleteStatus,
 				};
 			}
@@ -35,6 +49,16 @@ export class CommunicationService {
 					operationType: "listResponse",
 					productIds: productIds,
 					total: productIds.length,
+				};
+			}
+			case "listProductCertificates": {
+				const certificates =
+					await certificatesService.listProductCertificates(productId);
+				return {
+					operationType: "listProductCertificatesResponse",
+					productId: productId,
+					certificates: certificates,
+					total: certificates.length,
 				};
 			}
 		}

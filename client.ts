@@ -45,43 +45,55 @@ async function publishRequest(
 	console.log(`📤 Published ${operationType} message (${messageId})`);
 }
 
-function waitForResponse(expectedType: string): Promise<any> {
-	const timeoutMs = 10000;
-	return new Promise((resolve, reject) => {
-		const subscription = pubSubClient.subscription(RESPONSE_SUBSCRIPTION);
+// Response queue system to handle multiple concurrent requests
+const responseQueue: Map<string, any[]> = new Map();
 
-		const handle = async (message: any) => {
-			try {
-				console.log("started parsing");
-				const jsonString = message.data.toString();
-				console.log(expectedType);
-				console.log(jsonString);
-				const parsed = JSON.parse(jsonString);
-				message.ack();
-				if (parsed.operationType === expectedType) {
-					console.log("resolving");
-					subscription.removeListener("message", handle);
-					clearTimeout(timeout);
-					resolve(parsed);
-				} else {
-					console.log(
-						`Wrong expectedType (expected:${expectedType}, actual: ${parsed.operationType})`,
-					);
-				}
-			} catch (err) {
-				console.error("❌ Failed to parse response:", err);
-				// message.nack();
+// Set up the listener once
+const subscription = pubSubClient.subscription(RESPONSE_SUBSCRIPTION);
+subscription.on("message", async (message: any) => {
+	try {
+		const jsonString = message.data.toString();
+		const parsed = JSON.parse(jsonString);
+		message.ack();
+
+		const operationType = parsed.operationType;
+		if (!responseQueue.has(operationType)) {
+			responseQueue.set(operationType, []);
+		}
+		responseQueue.get(operationType)!.push(parsed);
+
+		console.log(`📥 Received ${operationType} response`);
+	} catch (err) {
+		console.error("❌ Failed to parse response:", err);
+	}
+});
+
+function waitForResponse(expectedType: string): Promise<any> {
+	const timeoutMs = 15000; // Increased timeout
+	return new Promise((resolve, reject) => {
+		const startTime = Date.now();
+
+		const checkQueue = () => {
+			const responses = responseQueue.get(expectedType);
+			if (responses && responses.length > 0) {
+				const response = responses.shift()!;
+				console.log(`✅ Got ${expectedType} response`);
+				resolve(response);
+				return;
 			}
+
+			// Check timeout
+			if (Date.now() - startTime > timeoutMs) {
+				reject(new Error(`Timeout waiting for ${expectedType}`));
+				return;
+			}
+
+			// Check again after a short delay
+			setTimeout(checkQueue, 200);
 		};
 
-		const timeout = setTimeout(() => {
-			//subscription.removeListener("message", handler);
-			reject(new Error(`Timeout waiting for ${expectedType}`));
-		}, timeoutMs);
-
-		// todo: message is not being processed
-		console.log(`listening on ${RESPONSE_SUBSCRIPTION}`);
-		subscription.on("message", handle);
+		console.log(`⏳ Waiting for ${expectedType} response...`);
+		checkQueue();
 	});
 }
 
@@ -92,7 +104,7 @@ async function main() {
 
 	// 1️⃣ Upload
 	const productId = Math.floor(Math.random() * 1000);
-	const certificateId = Math.floor(Math.random() * 1000);
+	const certificateId = "ISCC-CORSIA-Cert-US201-2440920252"; // Valid certificate ID
 	const file = fs.readFileSync("test_to_send/spiderweb.pdf");
 	const fileBase64 = file.toString("base64");
 
@@ -115,7 +127,22 @@ async function main() {
 		listResponse.productIds,
 	);
 
-	// 3️⃣ Delete random certificate
+	// 2️⃣b List Product Certificates (new operation)
+	if (listResponse.productIds.length > 0) {
+		const firstProductId = listResponse.productIds[0];
+		await publishRequest("listProductCertificates", {
+			productId: firstProductId,
+		});
+		const listProductResponse = await waitForResponse(
+			"listProductCertificatesResponse",
+		);
+		console.log(
+			`✅ Found ${listProductResponse.total} certificates for product ${firstProductId}:`,
+			listProductResponse.certificates.map((c: any) => c.id),
+		);
+	}
+
+	// 3️⃣ Delete random certificate (old operation)
 	if (listResponse.productIds.length > 0) {
 		const randomId =
 			listResponse.productIds[
@@ -125,11 +152,56 @@ async function main() {
 		const deleteResponse = await waitForResponse("deleteResponse");
 
 		if (deleteResponse.status === true)
-			console.log(`✅ Certificate with ID ${randomId} deleted successfully!`);
-		else console.log(`❌ Failed to delete certificate with ID ${randomId}`);
+			console.log(
+				`✅ All certificates for product ${randomId} deleted successfully!`,
+			);
+		else
+			console.log(`❌ Failed to delete certificates for product ${randomId}`);
 	} else {
 		console.log("⚠️ No certificates found to delete.");
 	}
+
+	// 3️⃣b Test deleteProductCertificate (new operation)
+	// First upload another certificate to have something to delete
+	const productId2 = Math.floor(Math.random() * 1000);
+	const certificateId2 = "EU-ISCC-Cert-ES216-20254133"; // Second valid certificate ID
+	await publishRequest("upload", {
+		productId: productId2,
+		file: fileBase64,
+		certificateId: certificateId2,
+	});
+	const uploadResponse2 = await waitForResponse("uploadResponse");
+
+	if (uploadResponse2.status === true) {
+		// List certificates for this product to get a certificate ID
+		await publishRequest("listProductCertificates", { productId: productId2 });
+		const listProductResponse = await waitForResponse(
+			"listProductCertificatesResponse",
+		);
+
+		if (listProductResponse.certificates.length > 0) {
+			const certToDelete = listProductResponse.certificates[0];
+			console.log(
+				`📋 Will delete certificate ${certToDelete.id} from product ${productId2}`,
+			);
+			await publishRequest("deleteProductCertificate", {
+				productId: productId2,
+				certificateId: certToDelete.id,
+			});
+			const deleteProductResponse = await waitForResponse(
+				"deleteProductCertificateResponse",
+			);
+
+			if (deleteProductResponse.status === true)
+				console.log(
+					`✅ Certificate ${certToDelete.id} for product ${productId2} deleted successfully!`,
+				);
+			else
+				console.log(
+					`❌ Failed to delete certificate ${certToDelete.id} for product ${productId2}`,
+				);
+		}
+	}
 }
 
-await main();
+main().catch(console.error);
