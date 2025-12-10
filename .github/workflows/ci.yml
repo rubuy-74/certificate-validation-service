@@ -6,7 +6,7 @@ on:
 
 jobs:
   quality:
-    runs-on: ubuntu-latest
+    runs-on: t01g01
     permissions:
       contents: read
     steps:
@@ -20,3 +20,4 @@ jobs:
           version: latest
       - name: Run Biome
         run: biome ci .
+
