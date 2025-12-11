@@ -10,7 +10,7 @@ terraform {
   # share the same state. Make sure this bucket exists before running
   # `terraform init` (for example, create it once via the console or gcloud).
   backend "gcs" {
-    # bucket = "made-in-portugal-terraform-state-pubsub"
+    bucket = "made-in-portugal-terraform-state-pubsub"
     prefix = "certificate-validation-service/infra"
   }
 }
