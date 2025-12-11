@@ -35,25 +35,21 @@ jobs:
           terraform_version: 1.5.6
 
       - name: Create Backend Bucket if missing
-              run: |
-                # 1. Check if the bucket exists
-                if ! gcloud storage ls gs://$BUCKET_NAME > /dev/null 2>&1; then
-                  echo "Bucket $BUCKET_NAME does not exist. Creating it..."
-                  
-                  # 2. Create the bucket
-                  gcloud storage buckets create gs://$BUCKET_NAME \
-                    --project=$PROJECT_ID \
-                    --location=$REGION \
-                    --uniform-bucket-level-access
-                    
-                  echo "Bucket created successfully."
-                else
-                  echo "Bucket $BUCKET_NAME already exists."
-                fi
-              env:
-                PROJECT_ID: ultra-component-479316-a5
-                BUCKET_NAME: made-in-portugal-certificates-pubsub
-                REGION: europe-southwest1
+        run: |
+          # 1. Check if the bucket exists
+          if ! gcloud storage ls gs://$BUCKET_NAME > /dev/null 2>&1; then
+            echo "Bucket $BUCKET_NAME does not exist. Creating it..."
+            
+            # 2. Create the bucket
+            gcloud storage buckets create gs://$BUCKET_NAME \
+              --project=$PROJECT_ID \
+              --location=$REGION \
+              --uniform-bucket-level-access
+              
+            echo "Bucket created successfully."
+          else
+            echo "Bucket $BUCKET_NAME already exists."
+          fi
 
       - name: Terraform init & apply (infra)
         working-directory: infra
