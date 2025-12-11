@@ -44,21 +44,36 @@ async function setupPubSub() {
 		const subscription = pubSubClient.subscription(REQUEST_SUBSCRIPTION);
 		subscription.on("message", async (message) => {
 			const jsonString = message.data.toString();
-			const payload = JSON.parse(jsonString);
-			const response = await communicationService.handleRequest(
-				payload.operationType,
-				payload.data.productId,
-				payload.data.file,
-				payload.data.certificateId,
-			);
-			message.ack();
-			const responsePayload = JSON.stringify(response);
-			pubSubClient.topic(RESPONSE_TOPIC).publishMessage({
-				data: Buffer.from(responsePayload),
+				try {
+					const payload = JSON.parse(jsonString);
+					const correlationId = message.attributes?.correlationId || payload.correlationId;
+					const response = await communicationService.handleRequest(
+						payload.operationType,
+						payload.data.productId,
+						payload.data.file,
+						payload.data.certificateId,
+					);
+					message.ack();
+					const responsePayload = JSON.stringify(response);
+					pubSubClient.topic(RESPONSE_TOPIC).publishMessage({
+						data: Buffer.from(responsePayload),
+						attributes: {
+							correlationId: correlationId || 'unknown'
+						}
+					});
+					console.log(`sent response to ${RESPONSE_TOPIC}`);
+					console.log(responsePayload);
+				} catch (e) {
+					const responsePayload = JSON.stringify({
+						operationType: "FailedResponse", 
+						status: false
+					})
+					pubSubClient.topic(RESPONSE_TOPIC).publishMessage({
+						data: Buffer.from(responsePayload),
+					});
+
+				}
 			});
-			console.log(`sent response to ${RESPONSE_TOPIC}`);
-			console.log(responsePayload);
-		});
 		subscription.on("error", (err) =>
 			console.error("❌ Subscription error:", err),
 		);
