@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  PROJECT_ID: made-in-portugal-dsle
+  PROJECT_ID: ultra-component-479316-a5 
   REGION: europe-southwest1
   REPOSITORY: t01g01-registry
   IMAGE_NAME: certificate-validation-pubsub
