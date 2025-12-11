@@ -9,9 +9,9 @@ env:
   PROJECT_ID: made-in-portugal-dsle
   REGION: europe-southwest1
   REPOSITORY: t01g01-registry
-  IMAGE_NAME: certificate-validation
+  IMAGE_NAME: certificate-validation-pubsub
   REGISTRY: europe-southwest1-docker.pkg.dev
-  BUCKET_NAME: made-in-portugal-certificates
+  BUCKET_NAME: made-in-portugal-certificates-pubsub
 
 jobs:
   build:
