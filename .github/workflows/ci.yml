@@ -6,7 +6,7 @@ on:
 
 jobs:
   quality:
-    runs-on: t01g01
+    runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:

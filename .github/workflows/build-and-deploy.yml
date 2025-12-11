@@ -15,7 +15,7 @@ env:
 
 jobs:
   build:
-    runs-on: t01g01
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
