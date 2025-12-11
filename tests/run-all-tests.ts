@@ -1,4 +1,4 @@
-import { spawn } from "child_process";
+import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -73,12 +73,12 @@ class TestRunner {
 				stdio: ["pipe", "pipe", "pipe"],
 			});
 
-			let serviceOutput = "";
-			let serviceError = "";
+			let _serviceOutput = "";
+			let _serviceError = "";
 
 			this.serviceProcess.stdout.on("data", (data: Buffer) => {
 				const output = data.toString();
-				serviceOutput += output;
+				_serviceOutput += output;
 				console.log(`[SERVICE] ${output.trim()}`);
 
 				// Check if service is ready
@@ -93,7 +93,7 @@ class TestRunner {
 
 			this.serviceProcess.stderr.on("data", (data: Buffer) => {
 				const output = data.toString();
-				serviceError += output;
+				_serviceError += output;
 				console.error(`[SERVICE ERROR] ${output.trim()}`);
 			});
 
@@ -213,14 +213,16 @@ class TestRunner {
 						);
 						if (summaryMatch) {
 							details = {
-								passed: parseInt(summaryMatch[1]),
-								total: parseInt(summaryMatch[2]),
+								passed: parseInt(summaryMatch[1], 10),
+								total: parseInt(summaryMatch[2], 10),
 								successRate: Math.round(
-									(parseInt(summaryMatch[1]) / parseInt(summaryMatch[2])) * 100,
+									(parseInt(summaryMatch[1], 10) /
+										parseInt(summaryMatch[2], 10)) *
+										100,
 								),
 							};
 						}
-					} catch (e) {
+					} catch (_e) {
 						// Ignore parsing errors
 					}
 				}
@@ -294,7 +296,7 @@ class TestRunner {
 		const totalTests = this.testResults.length;
 		const successRate = Math.round((passedTests / totalTests) * 100);
 
-		console.log("\n" + "=".repeat(80));
+		console.log(`\n${"=".repeat(80)}`);
 		console.log("📊 FINAL TEST REPORT");
 		console.log("=".repeat(80));
 
@@ -318,7 +320,7 @@ class TestRunner {
 			}
 		});
 
-		console.log("\n" + "─".repeat(80));
+		console.log(`\n${"─".repeat(80)}`);
 
 		if (successRate === 100) {
 			console.log(

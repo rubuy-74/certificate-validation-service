@@ -7,13 +7,13 @@ dotenv.config();
 const PROJECT_ID = process.env.PROJECT_ID || "test-project";
 const PUBSUB_PROJECT_ID = process.env.PUBSUB_PROJECT_ID || PROJECT_ID;
 
-const REQUEST_TOPIC = process.env.REQUEST_TOPIC || "CertificatesRequestTopic";
-const RESPONSE_TOPIC =
+const _REQUEST_TOPIC = process.env.REQUEST_TOPIC || "CertificatesRequestTopic";
+const _RESPONSE_TOPIC =
 	process.env.RESPONSE_TOPIC || "CertificatesResponseTopic";
-const RESPONSE_SUBSCRIPTION =
+const _RESPONSE_SUBSCRIPTION =
 	process.env.RESPONSE_SUBSCRIPTION || "CertificatesResponseSubscription";
 
-const pubSubClient = new PubSub({ projectId: PUBSUB_PROJECT_ID });
+const _pubSubClient = new PubSub({ projectId: PUBSUB_PROJECT_ID });
 
 async function testDirectUpload() {
 	console.log("🧪 Testing direct certificate verification...");

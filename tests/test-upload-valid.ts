@@ -8,7 +8,7 @@ const PROJECT_ID = process.env.PROJECT_ID || "test-project";
 const PUBSUB_PROJECT_ID = process.env.PUBSUB_PROJECT_ID || PROJECT_ID;
 
 const REQUEST_TOPIC = process.env.REQUEST_TOPIC || "CertificatesRequestTopic";
-const RESPONSE_TOPIC =
+const _RESPONSE_TOPIC =
 	process.env.RESPONSE_TOPIC || "CertificatesResponseTopic";
 const RESPONSE_SUBSCRIPTION =
 	process.env.RESPONSE_SUBSCRIPTION || "CertificatesResponseSubscription";
@@ -30,7 +30,7 @@ subscription.on("message", async (message: any) => {
 		if (!responseQueue.has(operationType)) {
 			responseQueue.set(operationType, []);
 		}
-		responseQueue.get(operationType)!.push(parsed);
+		responseQueue.get(operationType)?.push(parsed);
 
 		console.log(`📥 Received ${operationType} response`);
 	} catch (err) {
@@ -209,8 +209,8 @@ async function testValidUploads() {
 			"test-product-multiple",
 		];
 
-		const foundProducts = expectedProducts.filter(
-			(p) => listResponse.productIds && listResponse.productIds.includes(p),
+		const foundProducts = expectedProducts.filter((p) =>
+			listResponse.productIds?.includes(p),
 		);
 
 		const success = foundProducts.length === expectedProducts.length;

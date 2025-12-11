@@ -8,7 +8,7 @@ const PROJECT_ID = process.env.PROJECT_ID || "test-project";
 const PUBSUB_PROJECT_ID = process.env.PUBSUB_PROJECT_ID || PROJECT_ID;
 
 const REQUEST_TOPIC = process.env.REQUEST_TOPIC || "CertificatesRequestTopic";
-const RESPONSE_TOPIC =
+const _RESPONSE_TOPIC =
 	process.env.RESPONSE_TOPIC || "CertificatesResponseTopic";
 const RESPONSE_SUBSCRIPTION =
 	process.env.RESPONSE_SUBSCRIPTION || "CertificatesResponseSubscription";

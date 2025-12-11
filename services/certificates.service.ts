@@ -154,8 +154,8 @@ export class CertificatesService {
 				);
 			} else {
 				// Firestore implementation
-				const docRef = firestore!
-					.collection(FIRESTORE_COLLECTION)
+				const docRef = firestore
+					?.collection(FIRESTORE_COLLECTION)
 					.doc(productIdStr);
 
 				const doc = await docRef.get();
@@ -198,8 +198,8 @@ export class CertificatesService {
 				return products.map((p) => p.productId);
 			} else {
 				// Firestore implementation
-				const snapshot = await firestore!
-					.collection(FIRESTORE_COLLECTION)
+				const snapshot = await firestore
+					?.collection(FIRESTORE_COLLECTION)
 					.get();
 				const products: Array<{ productId: string; certificates: any[] }> = [];
 				snapshot.forEach((doc) => {
@@ -237,8 +237,8 @@ export class CertificatesService {
 				return certificates;
 			} else {
 				// Firestore implementation
-				const docRef = firestore!
-					.collection(FIRESTORE_COLLECTION)
+				const docRef = firestore
+					?.collection(FIRESTORE_COLLECTION)
 					.doc(productIdStr);
 
 				const doc = await docRef.get();
@@ -272,8 +272,8 @@ export class CertificatesService {
 			} else {
 				// Firestore implementation
 				const bucket = storage.bucket(BUCKET_NAME);
-				const docRef = firestore!
-					.collection(FIRESTORE_COLLECTION)
+				const docRef = firestore
+					?.collection(FIRESTORE_COLLECTION)
 					.doc(productIdStr);
 				const doc = await docRef.get();
 				if (doc.exists) {
@@ -300,8 +300,8 @@ export class CertificatesService {
 					}
 				}
 
-				await firestore!
-					.collection(FIRESTORE_COLLECTION)
+				await firestore
+					?.collection(FIRESTORE_COLLECTION)
 					.doc(productIdStr)
 					.delete()
 					.catch(() => {});
@@ -358,8 +358,8 @@ export class CertificatesService {
 			} else {
 				// Firestore implementation
 				const bucket = storage.bucket(BUCKET_NAME);
-				const docRef = firestore!
-					.collection(FIRESTORE_COLLECTION)
+				const docRef = firestore
+					?.collection(FIRESTORE_COLLECTION)
 					.doc(productIdStr);
 				const doc = await docRef.get();
 				if (!doc.exists) return false;

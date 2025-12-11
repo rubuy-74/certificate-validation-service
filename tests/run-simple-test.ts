@@ -54,7 +54,7 @@ async function runAllTests(): Promise<number> {
 
 	const testNames = Object.keys(testFiles);
 	let totalPassed = 0;
-	let totalTests = testNames.length;
+	const totalTests = testNames.length;
 
 	for (const testName of testNames) {
 		const testFile = testFiles[testName as keyof typeof testFiles];
@@ -71,7 +71,7 @@ async function runAllTests(): Promise<number> {
 		}
 	}
 
-	console.log("\n" + "=".repeat(50));
+	console.log(`\n${"=".repeat(50)}`);
 	console.log("📊 FINAL RESULTS");
 	console.log("=".repeat(50));
 	console.log(`✅ Passed: ${totalPassed}/${totalTests}`);
@@ -120,7 +120,7 @@ async function main() {
 }
 
 // Import spawn for child process execution
-import { spawn } from "child_process";
+import { spawn } from "node:child_process";
 
 main().catch((error) => {
 	console.error("💥 Fatal error:", error);

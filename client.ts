@@ -60,7 +60,7 @@ subscription.on("message", async (message: any) => {
 		if (!responseQueue.has(operationType)) {
 			responseQueue.set(operationType, []);
 		}
-		responseQueue.get(operationType)!.push(parsed);
+		responseQueue.get(operationType)?.push(parsed);
 
 		console.log(`📥 Received ${operationType} response`);
 	} catch (err) {
