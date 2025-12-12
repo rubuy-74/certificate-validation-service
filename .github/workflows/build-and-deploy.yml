@@ -12,6 +12,10 @@ env:
   IMAGE_NAME: certificate-validation-pubsub
   REGISTRY: europe-southwest1-docker.pkg.dev
   BUCKET_NAME: made-in-portugal-certificates-pubsub
+  REQUEST_TOPIC: certificate-validation
+  RESPONSE_TOPIC: certificate-validatior-response
+  REQUEST_SUBSCRIPTION: certificate-validation-sub 
+  RESPONSE_SUBSCRIPTION: certificate-validator-response-sub
 
 jobs:
   build:

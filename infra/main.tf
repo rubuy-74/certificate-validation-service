@@ -106,3 +106,13 @@ output "service_url" {
 output "service_account_email" {
   value = google_service_account.certificate_validation_sa.email
 }
+
+output "request_subscription" {
+  description = "The request Pub/Sub subscription name."
+  value       = google_pubsub_subscription.certificate_validation_sub.name
+}
+
+output "response_subscription" {
+  description = "The response Pub/Sub subscription name."
+  value       = google_pubsub_subscription.certificate_validator_response_sub.name
+}

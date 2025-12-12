@@ -11,11 +11,11 @@ const communicationService = new CommunicationService();
 const PROJECT_ID = process.env.PROJECT_ID || "test-project";
 // Pub/Sub may live in a different project — allow overriding specifically for Pub/Sub
 const PUBSUB_PROJECT_ID = process.env.PUBSUB_PROJECT_ID || PROJECT_ID;
-const REQUEST_TOPIC = process.env.REQUEST_TOPIC || "CertificatesRequestTopic";
+const REQUEST_TOPIC = process.env.REQUEST_TOPIC || "certificate-validation";
 const REQUEST_SUBSCRIPTION =
-	process.env.REQUEST_SUBSCRIPTION || "CertificatesRequestSubscription";
+	process.env.REQUEST_SUBSCRIPTION || "certicate-validation-sub";
 const RESPONSE_TOPIC =
-	process.env.RESPONSE_TOPIC || "CertificatesResponseTopic";
+	process.env.RESPONSE_TOPIC || "certificate-validator-response-sub";
 
 const pubSubClient = new PubSub({ projectId: PUBSUB_PROJECT_ID });
 
