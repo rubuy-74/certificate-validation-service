@@ -13,7 +13,7 @@ const PROJECT_ID = process.env.PROJECT_ID || "test-project";
 const PUBSUB_PROJECT_ID = process.env.PUBSUB_PROJECT_ID || PROJECT_ID;
 const REQUEST_TOPIC = process.env.REQUEST_TOPIC || "certificate-validation";
 const REQUEST_SUBSCRIPTION =
-	process.env.REQUEST_SUBSCRIPTION || "certicate-validation-sub";
+	process.env.REQUEST_SUBSCRIPTION || "certificate-validation-sub";
 const RESPONSE_TOPIC =
 	process.env.RESPONSE_TOPIC || "certificate-validator-response-sub";
 
