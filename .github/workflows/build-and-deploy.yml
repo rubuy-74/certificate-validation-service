@@ -6,12 +6,12 @@ on:
   workflow_dispatch:
 
 env:
-  PROJECT_ID: ultra-component-479316-a5 
+  PROJECT_ID: made-in-portugal-dsle
   REGION: europe-southwest1
   REPOSITORY: t01g01-registry
-  IMAGE_NAME: certificate-validation-pubsub
+  IMAGE_NAME: certificate-validation
   REGISTRY: europe-southwest1-docker.pkg.dev
-  BUCKET_NAME: made-in-portugal-certificates-pubsub
+  BUCKET_NAME: made-in-portugal-certificates
   REQUEST_TOPIC: certificate-validation
   RESPONSE_TOPIC: certificate-validatior-response
   REQUEST_SUBSCRIPTION: certificate-validation-sub 
@@ -19,7 +19,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: t01g01
 
     steps:
       - name: Checkout code
