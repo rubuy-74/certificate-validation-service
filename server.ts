@@ -2,11 +2,15 @@ import http from "node:http";
 import { PubSub } from "@google-cloud/pubsub";
 import dotenv from "dotenv"; // import { handleCertificateMessage } from "./services/certificates.service";
 import { CommunicationService } from "./services/communication.service";
+import { CertificatesService } from "./services/certificates.service";
 
 // Load env (local .env or CI/Cloud Run env)
 dotenv.config();
 
 const communicationService = new CommunicationService();
+const service = new CertificatesService();
+
+const PORT = Number(process.env.PORT || process.env.PORT_NUMBER || 8080);
 
 const PROJECT_ID = process.env.PROJECT_ID || "test-project";
 // Pub/Sub may live in a different project — allow overriding specifically for Pub/Sub
